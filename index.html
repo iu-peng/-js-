@@ -5,7 +5,10 @@
 	<title>js工具函数集锦</title>
 	<style>
 		body{
-			height:10000px;
+			background:#20b2aa;
+		}
+		#box{
+			height:100px;
 		}
 	</style>
 </head>
@@ -19,10 +22,10 @@
 			a:1,
 			b:[1,1,3]
 		}
-		let o = deepClone(obj)
-		console.log(o)
-		obj.b[0] = 99
-		console.log(o)
+		console.log( stringfyQueryString(obj) )
+		box.style.backgroundColor = randomColor()
+		//let d = new Date()
+		//console.log(parseQueryString('https://www.baidu.com/s?tn=99006304_1_oem_dg&isource=infinity&wd=%E5%84%BF%E7%AB%A5'))
 	</script>
 </body>
 </html>

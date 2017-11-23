@@ -187,3 +187,184 @@ function deepClone(values) {
 
     throw new Error("Unable to copy values! Its type isn't supported.");
 }
+/**
+ * 
+ * @desc   判断`obj`是否为空
+ * @param  {Object} obj
+ * @return {Boolean}
+ */
+function isEmptyObject(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj))
+        return false
+    return !Object.keys(obj).length
+}
+/**
+ * 
+ * @desc 随机生成颜色
+ * @return {String} 
+ */
+function randomColor() {
+    return '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).slice(-6);
+}
+/**
+ * 
+ * @desc 生成指定范围随机数
+ * @param  {Number} min 
+ * @param  {Number} max 
+ * @return {Number} 
+ */
+function randomNum(min, max) {
+    return Math.floor(min + Math.random() * (max - min));
+}
+/**
+ * 
+ * @desc   判断是否为邮箱地址
+ * @param  {String}  str
+ * @return {Boolean} 
+ */
+function isEmail(str) {
+    return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(str);
+}
+/**
+ * 
+ * @desc  判断是否为身份证号
+ * @param  {String|Number} str 
+ * @return {Boolean}
+ */
+function isIdCard(str) {
+    return /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/.test(str)
+}
+/**
+ * 
+ * @desc   判断是否为URL地址
+ * @param  {String} str 
+ * @return {Boolean}
+ */
+function isUrl(str) {
+    return /[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i.test(str);
+}
+/**
+ * 
+ * @desc   现金额转大写
+ * @param  {Number} n 
+ * @return {String}
+ */
+function digitUppercase(n) {
+    var fraction = ['角', '分'];
+    var digit = [
+        '零', '壹', '贰', '叁', '肆',
+        '伍', '陆', '柒', '捌', '玖'
+    ];
+    var unit = [
+        ['元', '万', '亿'],
+        ['', '拾', '佰', '仟']
+    ];
+    var head = n < 0 ? '欠' : '';
+    n = Math.abs(n);
+    var s = '';
+    for (var i = 0; i < fraction.length; i++) {
+        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+    }
+    s = s || '整';
+    n = Math.floor(n);
+    for (var i = 0; i < unit[0].length && n > 0; i++) {
+        var p = '';
+        for (var j = 0; j < unit[1].length && n > 0; j++) {
+            p = digit[n % 10] + unit[1][j] + p;
+            n = Math.floor(n / 10);
+        }
+        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+    }
+    return head + s.replace(/(零.)*零元/, '元')
+        .replace(/(零.)+/g, '零')
+        .replace(/^整$/, '零元整');
+}
+/**
+ * 
+ * @desc 判断浏览器是否支持webP格式图片
+ * @return {Boolean} 
+ */
+function isSupportWebP() {
+    return !![].map && document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0;
+}
+/**
+ * @desc   格式化${startTime}距现在的已过时间
+ * @param  {Date} startTime 
+ * @return {String}
+ */
+function formatPassTime(startTime) {
+    var currentTime = Date.parse(new Date()),
+        time = currentTime - startTime,
+        day = parseInt(time / (1000 * 60 * 60 * 24)),
+        hour = parseInt(time / (1000 * 60 * 60)),
+        min = parseInt(time / (1000 * 60)),
+        month = parseInt(day / 30),
+        year = parseInt(month / 12);
+    if (year) return year + "年前"
+    if (month) return month + "个月前"
+    if (day) return day + "天前"
+    if (hour) return hour + "小时前"
+    if (min) return min + "分钟前"
+    else return '刚刚'
+}
+/**
+ * 
+ * @desc   格式化现在距${endTime}的剩余时间
+ * @param  {Date} endTime  
+ * @return {String}
+ */
+function formatRemainTime(endTime) {
+    var startDate = new Date(); //开始时间
+    var endDate = new Date(endTime); //结束时间
+    var t = endDate.getTime() - startDate.getTime(); //时间差
+    var d = 0,
+        h = 0,
+        m = 0,
+        s = 0;
+    if (t >= 0) {
+        d = Math.floor(t / 1000 / 3600 / 24);
+        h = Math.floor(t / 1000 / 60 / 60 % 24);
+        m = Math.floor(t / 1000 / 60 % 60);
+        s = Math.floor(t / 1000 % 60);
+    }
+    return d + "天 " + h + "小时 " + m + "分钟 " + s + "秒";
+}
+/**
+ * 
+ * @desc   url参数转对象
+ * @param  {String} url  default: window.location.href
+ * @return {Object} 
+ */
+function parseQueryString(url) {
+    url = url == null ? window.location.href : url
+    var search = url.substring(url.lastIndexOf('?') + 1)
+    if (!search) {
+        return {}
+    }
+    return JSON.parse('{"' + decodeURIComponent(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
+}
+/**
+ * 
+ * @desc   对象序列化
+ * @param  {Object} obj 
+ * @return {String}
+ */
+function stringfyQueryString(obj) {
+    if (!obj) return '';
+    var pairs = [];
+
+    for (var key in obj) {
+        var value = obj[key];
+
+        if (value instanceof Array) {
+            for (var i = 0; i < value.length; ++i) {
+                pairs.push(encodeURIComponent(key + '[' + i + ']') + '=' + encodeURIComponent(value[i]));
+            }
+            continue;
+        }
+
+        pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+    }
+
+    return pairs.join('&');
+}
